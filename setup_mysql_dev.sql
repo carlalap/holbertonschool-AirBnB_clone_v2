@@ -1,6 +1,6 @@
 -- Creates database hbnb_dev_db
 -- user hbnb_dev (localhost)
--- password of the hbnb dev is hbnb_dev_pwd
+-- password of the hbnb dev is hbnb_dev_pwd.
 
 CREATE DATABASE IF NOT EXISTS hbnb_dev_db;
 
