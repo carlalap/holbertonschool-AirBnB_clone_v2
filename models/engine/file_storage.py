@@ -27,10 +27,11 @@ class FileStorage:
 
     def delete(self, obj=None):
         """Delete obj from __objects if it's inside"""
-        if obj is not None:
-            key = type(obj).__name__ + '.' + obj.id
-            if key in self.__objects:
-                del self.__objects[key]
+        if obj in self.__objects.values():
+            key = obj.__class__.__name__+"." + obj.id
+            self.__objects.pop(key, None)
+        elif obj is None:
+            return
 
 
     def reload(self):
