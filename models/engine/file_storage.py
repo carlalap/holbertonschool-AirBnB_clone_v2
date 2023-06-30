@@ -37,7 +37,6 @@ class FileStorage:
         elif obj is None:
             return
 
-
     def reload(self):
         """Loads storage dictionary from file"""
         from models.base_model import BaseModel
