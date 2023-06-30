@@ -114,27 +114,39 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Creates a new instance of BaseModel, saves it
+        """Creates a new instance/object of any class, saves it
         Exceptions:
             SyntaxError: when there is no args given
             NameError: when there is no object taht has the name
         """
-        try:
-            if not line:
-                raise SyntaxError()
-            my_list = line.split(" ")
-            obj = eval("{}()".format(my_list[0]))
-            for element in my_list[1:]:
-                key, val = element.split('=')
-                val = val.replace('_', ' ')
-                if hasattr(obj, key):
-                    setattr(obj, key, eval(val))
-            obj.save()
-            print("{}".format(obj.id))
-        except SyntaxError:
+
+        split_args = args.split()
+        if not args:
             print("** class name missing **")
-        except NameError:
+            return
+        elif split_args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
+            return 
+        new_object = HBNBCommand.classes[split_args[0]]()
+        
+        for index in range(1, len(split_args)):
+            key_val = split_args[index].partition('=')
+            new_key = key_val[0]
+            new_val = key_val[2]
+            if '\"' in new_val:
+                new_val = new_val[1:-1]
+                new_val = new_val.replace("_", " ")
+            elif '.' in new_val:
+                new_val = float(new_val)
+            else:
+                new_val = int(new_val)
+
+            if hasattr(new_object, new_key):
+                setattr(new_object, new_key, new_val)
+
+        storage.new(new_object)
+        storage.save()
+        print(new_object.id)
 
     def help_create(self):
         """ Help information for the create method """
