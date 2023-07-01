@@ -114,7 +114,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Creates a new instance/object of any class, saves it
+        """Creates a new object of any class, saves it
         Exceptions:
             SyntaxError: when there is no args given
             NameError: when there is no object taht has the name
@@ -126,9 +126,9 @@ class HBNBCommand(cmd.Cmd):
             return
         elif split_args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
-            return 
+            return
         new_object = HBNBCommand.classes[split_args[0]]()
-        
+
         for index in range(1, len(split_args)):
             key_val = split_args[index].partition('=')
             new_key = key_val[0]
@@ -209,10 +209,10 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
-        except KeyError:
-            print("** no instance found **")
+            except KeyError:
+                print("** no instance found **")
 
     def help_destroy(self):
         """ Help information for the destroy command """
@@ -341,6 +341,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
