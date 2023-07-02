@@ -3,7 +3,7 @@
 Script that manage storage engine and use SQLAlchemy
 adding db storage as a new storage.
 """
-import models
+
 from models.base_model import BaseModel, Base
 from models.amenity import Amenity
 from models.city import City
