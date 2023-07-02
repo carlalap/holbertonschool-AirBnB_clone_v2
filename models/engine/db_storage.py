@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """
 Script that manage storage engine and use SQLAlchemy
-adding db storage as a new storage
+adding db storage as a new storage.
 """
 import models
 from models.base_model import BaseModel, Base
