@@ -3,7 +3,6 @@
 Script that manage storage engine and use SQLAlchemy
 adding db storage as a new storage
 """
-import models
 from models.base_model import BaseModel, Base
 from models.amenity import Amenity
 from models.city import City
@@ -13,8 +12,7 @@ from models.state import State
 from models.user import User
 import sqlalchemy
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.sql import text
 from os import getenv
 
@@ -30,13 +28,13 @@ class DBStorage:
         dialect = "mysql"
         driver = "mysqldb"
         user = getenv("HBNB_MYSQL_USER")
-        password = getenv("HBNB_MYSQL_PWD")
+        passwd = getenv("HBNB_MYSQL_PWD")
         host = getenv("HBNB_MYSQL_HOST")
-        database = getenv("HBNB_MYSQL_DB")
+        db = getenv("HBNB_MYSQL_DB")
 
-        self.__engine = create_engine(
-            'mysql+mysqldb://{}:{}@{}/{}'.
-            format(user, password, host, database), pool_pre_ping=True)
+        self.__engine = create_engine('{}+{}://{}:{}@{}/{}'
+                                    .format(dialect, driver, user, passwd,
+                                            host, db), pool_pre_ping=True)
         if getenv('HBNB_ENV') == 'test':
             Base.metadata.drop_all(self.__engine)
 
@@ -44,22 +42,20 @@ class DBStorage:
         """ query on the current database session and return a dictionary"""
 
         dictionary = {}
-        classes = [User, State, City, Amenity, Place, Review]
+        classes = {User, State, City, Amenity, Place, Review}
 
-        if cls is not None:
-            if type(cls) is str:
-                cls = eval(cls)
-            query = self.__session.query(cls)
-            for elem in query:
-                key = "{}.{}".format(type(elem).__name__, elem.id)
-                dictionary[key] = elem
-        else:
-            for state in classes:
-                query = self.__session.query(state)
-                for elem in query:
-                    key = "{}.{}".format(type(elem).__name__, elem.id)
-                    dictionary[key] = elem
-        return (dictionary)
+        if cls in classes:
+            dic = self.__session.query(cls).all()
+            for el in dic:
+                key = el.__class__.name__+ '.'+ el.id
+                dictionary[key] = el
+        elif cls is None:
+            dic = []
+            for cls in classes:
+                dic += self.__session.query(cls).all()
+                for el in dic:
+                    key= el.__class__.__name__+'.'+el.id
+                    dictionary[key]=  el
 
     def new(self, obj):
         """add new object to the current database"""
@@ -84,3 +80,4 @@ class DBStorage:
         """call remove method on the private session attribute
         self.__session or close on the class Session"""
         self.__session.remove()
+
