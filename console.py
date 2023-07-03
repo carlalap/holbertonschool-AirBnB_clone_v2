@@ -2,14 +2,16 @@
 """ Console Module """
 import cmd
 import sys
-from models.base_model import BaseModel
-from models import storage
+from datetime import datetime
+from models.base_model import BaseModel, Base
+from models.__init__ import storage
 from models.user import User
 from models.place import Place
 from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from shlex import split
 
 
 class HBNBCommand(cmd.Cmd):
@@ -119,34 +121,27 @@ class HBNBCommand(cmd.Cmd):
             SyntaxError: when there is no args given
             NameError: when there is no object taht has the name
         """
-
-        split_args = args.split()
-        if not args:
+        try:
+            if not args:
+                raise SyntaxError()
+            split1 = args.split(' ')
+            new_instance = eval('{}()'.format(split1[0]))
+            params = split1[1:]
+            for param in params:
+                k, v = param.split('=')
+                try:
+                    attribute = HBNBCommand.verify_attribute(v)
+                except Exception:
+                    continue
+                if not attribute:
+                    continue
+                setattr(new_instance, k, attribute)
+            new_instance.save()
+            print(new_instance.id)
+        except SyntaxError:
             print("** class name missing **")
-            return
-        elif split_args[0] not in HBNBCommand.classes:
+        except NameError as e:
             print("** class doesn't exist **")
-            return
-        new_object = HBNBCommand.classes[split_args[0]]()
-
-        for index in range(1, len(split_args)):
-            key_val = split_args[index].partition('=')
-            new_key = key_val[0]
-            new_val = key_val[2]
-            if '\"' in new_val:
-                new_val = new_val[1:-1]
-                new_val = new_val.replace("_", " ")
-            elif '.' in new_val:
-                new_val = float(new_val)
-            else:
-                new_val = int(new_val)
-
-            if hasattr(new_object, new_key):
-                setattr(new_object, new_key, new_val)
-
-        storage.new(new_object)
-        storage.save()
-        print(new_object.id)
 
     def help_create(self):
         """ Help information for the create method """
@@ -212,7 +207,7 @@ class HBNBCommand(cmd.Cmd):
             del (storage.all()[key])
             storage.save()
         except KeyError:
-                print("** no instance found **")
+            print("** no instance found **")
 
     def help_destroy(self):
         """ Help information for the destroy command """
@@ -221,6 +216,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
+        obj = storage.all()
         print_list = []
 
         if args:
@@ -234,7 +230,6 @@ class HBNBCommand(cmd.Cmd):
         else:
             for k, v in storage._FileStorage__objects.items():
                 print_list.append(str(v))
-
         print(print_list)
 
     def help_all(self):
@@ -341,6 +336,22 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
+    @classmethod
+    def verify_attribute(cls, attribute):
+        """
+        Verify if the attribute is correctly formatted
+        """
+        if attribute[0] is attribute[-1] in ['"', "'"]:
+            return attribute.strip('"\'').replace('_', ' ').replace('\\', '"')
+        else:
+            try:
+                try:
+                    return int(attribute)
+                except ValueError:
+                    return float(attribute)
+            except ValueError:
+                return None
 
 
 if __name__ == "__main__":

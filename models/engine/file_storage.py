@@ -10,11 +10,13 @@ class FileStorage:
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        if cls is not None:
-            return {key: self.__objects[key]
-                    for key in self.__objects
-                    if self.__objects[key].__class__==cls}
-        return FileStorage.__objects
+        if cls is None:
+            return FileStorage.__objects
+        new_dict = {}
+        for key, val in FileStorage.__objects.items():
+            if isinstance(val, cls):
+                new_dict[key] = val
+        return new_dict
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -31,11 +33,12 @@ class FileStorage:
 
     def delete(self, obj=None):
         """Delete obj from __objects if it's inside"""
-        if obj in self.__objects.values():
-            key = obj.__class__.__name__+"." + obj.id
-            self.__objects.pop(key, None)
-        elif obj is None:
+        if obj is None:
             return
+        key = "{}.{}".format(obj.__class__.__name__, obj.id)
+        if key in FileStorage.__objects:
+            del FileStorage.__objects[key]
+            self.save()
 
     def reload(self):
         """Loads storage dictionary from file"""
@@ -57,6 +60,10 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                    self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
+
+    def close(self):
+        """public method for call the reload method"""
+        self.reload()
