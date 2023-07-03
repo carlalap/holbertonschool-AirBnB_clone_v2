@@ -40,7 +40,7 @@ class DBStorage:
             'mysql+mysqldb://{}:{}@{}/{}'.
             format(user, password, host, db), pool_pre_ping=True)
         if env == "test":
-            Base.metadata.drop_all()
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """Method to return a dictionary of objects"""
