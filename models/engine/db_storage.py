@@ -12,7 +12,7 @@ from models.review import Review
 from models.state import State
 from models.user import User
 import sqlalchemy
-from sqlalchemy import create_engine
+from sqlalchemy import (create_engine)
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from os import getenv
@@ -67,8 +67,7 @@ class DBStorage:
 
     def delete(self, obj=None):
         """delete from the current database session obj"""
-        if obj:
-            DBStorage.__session.delete(obj)
+        DBStorage.__session.delete(obj)
 
     def reload(self):
         """creates the current database session """
@@ -76,7 +75,7 @@ class DBStorage:
         session_factory = sessionmaker(bind=self.__engine,
                                        expire_on_commit=False)
         Session = scoped_session(session_factory)
-        DBStorage.__session = Session()
+        DBStorage.__session = Session
 
     def close(self):
         """call remove method on the private session attribute
