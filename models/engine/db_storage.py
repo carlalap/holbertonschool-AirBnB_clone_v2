@@ -4,7 +4,8 @@ Script that manage storage engine and use SQLAlchemy
 adding db storage as a new storage.
 """
 import models
-from models.base_model import BaseModel, Base
+from models.base_model import BaseModel
+from models.base_model import Base
 from models.amenity import Amenity
 from models.city import City
 from models.place import Place
@@ -18,8 +19,8 @@ from sqlalchemy.orm import scoped_session
 from os import getenv
 
 
-dialect = "mysql"
-driver = "mysqldb"
+# dialect = "mysql"
+# driver = "mysqldb"
 user = getenv("HBNB_MYSQL_USER")
 password = getenv("HBNB_MYSQL_PWD")
 host = getenv("HBNB_MYSQL_HOST")
@@ -38,7 +39,7 @@ class DBStorage:
         self.__engine = create_engine(
             'mysql+mysqldb://{}:{}@{}/{}'.
             format(user, password, host, db), pool_pre_ping=True)
-        if env == 'test':
+        if env == "test":
             Base.metadata.drop_all()
 
     def all(self, cls=None):
