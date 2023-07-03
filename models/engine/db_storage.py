@@ -23,7 +23,8 @@ driver = "mysqldb"
 user = getenv("HBNB_MYSQL_USER")
 password = getenv("HBNB_MYSQL_PWD")
 host = getenv("HBNB_MYSQL_HOST")
-env = getenv("HBNB_MYSQL_DB")
+db = getenv('HBNB_MYSQL_DB')
+env = getenv('HBNB_ENV')
 
 
 class DBStorage:
@@ -36,7 +37,7 @@ class DBStorage:
         """Initializes Instance into DBStorage"""
         self.__engine = create_engine(
             'mysql+mysqldb://{}:{}@{}/{}'.
-            format(user, password, host, database), pool_pre_ping=True)
+            format(user, password, host, db), pool_pre_ping=True)
         if env == 'test':
             Base.metadata.drop_all()
 
