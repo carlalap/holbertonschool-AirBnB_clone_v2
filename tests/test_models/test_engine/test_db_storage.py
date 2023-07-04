@@ -1,51 +1,65 @@
-from models.state import State
-from models.engine.db_storage import DBStorage
 import unittest
-import MySQLdb
-import pycodestyle
-import os
-
+from models import DBStorage, User
 
 class TestDBStorage(unittest.TestCase):
-    """a class to test db storage """
 
-    @classmethod
     def setUp(self):
-        """Set up MySQL"""
-        self.db = MySQLdb.connect(host="localhost",
-                                port=3306,
-                                user='hbnb_test',
-                                passwd='hbnb_test_pwd',
-                                db='hbnb_test_db',
-                                charset='utf8')
-        self.cur = self.db.cursor()
+        """Set up for the DBStorage tests"""
+        # You might want to change this to your test database
         self.storage = DBStorage()
-        self.storage.reload()
 
-    @classmethod
     def tearDown(self):
-        """Tear down MySQL"""
-        self.cur.close()
-        self.db.close()
+        """Tear down for the DBStorage tests"""
+        self.storage.close()
 
-    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') != 'db', 'db')
-    def test_pycodestyle_DBStorage(self):
-        """test pycodestyle style"""
-        style = pycodestyle.StyleGuide(quiet=True)
-        p = style.check_files(['models/engine/db_storage.py'])
-        self.assertEqual(p.total_errors, 0, "pycodestyle")
+    def test_new(self):
+        """Test the new method"""
+        # Create a new User
+        user = User()
+        user.id = "123"
+        user.name = "MyName"
+        self.storage.new(user)
+        self.storage.save()
 
-    @unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') != 'db', 'db')
-    def test_add(self):
-        """Test add method"""
-        self.cur.execute("""
-        INSERT INTO states (id, created_at, updated_at, name)
-        VALUES (1, '2017-11-10 00:53:19', '2017-11-10 00:53:19', "California")
-        """)
-        self.cur.execute('SELECT * FROM states')
-        rows = self.cur.fetchall()
-        self.assertEqual(len(rows), 1)
+        # Fetch the user back from the DB
+        users = self.storage.all(User)
+        self.assertIn("User.123", users)
 
+    def test_delete(self):
+        """Test the delete method"""
+        user = User()
+        user.id = "123"
+        user.name = "MyName"
+        self.storage.new(user)
+        self.storage.save()
 
+        # Now delete the user
+        self.storage.delete(user)
+        self.storage.save()
+
+        # Fetch the user back from the DB
+        users = self.storage.all(User)
+        self.assertNotIn("User.123", users)
+
+    def test_all(self):
+        """Test the all method"""
+        user1 = User()
+        user1.id = "123"
+        user1.name = "MyName"
+        self.storage.new(user1)
+        
+        user2 = User()
+        user2.id = "456"
+        user2.name = "AnotherName"
+        self.storage.new(user2)
+
+        self.storage.save()
+
+        # Fetch the users back from the DB
+        users = self.storage.all(User)
+        self.assertIn("User.123", users)
+        self.assertIn("User.456", users)
+
+# Run the tests
 if __name__ == "__main__":
     unittest.main()
