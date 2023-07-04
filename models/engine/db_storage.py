@@ -82,4 +82,3 @@ class DBStorage:
         """call remove method on the private session attribute
         self.__session or close on the class Session"""
         DBStorage.__session.close()
-
