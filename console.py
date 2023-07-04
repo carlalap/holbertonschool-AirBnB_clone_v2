@@ -2,9 +2,7 @@
 """ Console Module """
 import cmd
 import sys
-from datetime import datetime
-from models.base_model import BaseModel
-from models.base_model import Base
+from models.base_model import BaseModel, Base
 from models.__init__ import storage
 from models.user import User
 from models.place import Place
@@ -12,7 +10,6 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-from shlex import split
 
 
 class HBNBCommand(cmd.Cmd):
@@ -117,11 +114,7 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Creates a new object of any class, saves it
-        Exceptions:
-            SyntaxError: when there is no args given
-            NameError: when there is no object taht has the name
-        """
+        """ Create an object of any class"""
         try:
             if not args:
                 raise SyntaxError()
@@ -215,22 +208,20 @@ class HBNBCommand(cmd.Cmd):
         print("Destroys an individual instance of a class")
         print("[Usage]: destroy <className> <objectId>\n")
 
-    def do_all(self, arg):
-        """Prints all string representation of all
-        instances based on the class name"""
+    def do_all(self, args):
+        """ Shows all objects, or all objects of a class"""
+        obj = storage.all()
         print_list = []
-        if arg:
-            try:
-                cls = arg.split()[0]
-                objects = models.storage.all(eval(cls))
-                for v in objects.values():
-                    print_list.append(str(v))
-            except (NameError, SyntaxError):
+        if args:
+            args = args.split(' ')[0]  # remove possible trailing args
+            if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
+            for k, v in obj.items():
+                if k.split('.')[0] == args:
+                    print_list.append(str(v))
         else:
-            objects = models.storage.all()
-            for v in objects.values():
+            for k, v in obj.items():
                 print_list.append(str(v))
         print(print_list)
 
@@ -356,7 +347,5 @@ class HBNBCommand(cmd.Cmd):
                 return None
 
 
-if __name__ == '__main__':
-    from models import storage
-    storage.reload()
+if __name__ == "__main__":
     HBNBCommand().cmdloop()
