@@ -1,3 +1,7 @@
+
+# AirBnB clone - Web framework
+
+
 <div class="panel panel-default">
   <div class="panel-heading">
    <h3 class="panel-title">Concepts</h3>
@@ -102,12 +106,6 @@
 </code></pre>
 
 <p><img src="https://s3.eu-west-3.amazonaws.com/hbtn.intranet.project.files/concepts/74/hbnb_step3.png" alt="" loading='lazy' style="" /></p>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/lzs4nQOiZQY" frameborder="0" allowfullscreen></iframe>
-
-<h3>Manual QA Review</h3>
-
-<p><strong>It is your responsibility to request a review for this project from a peer before the project’s deadline. If no peers have been reviewed, you should request a review from a TA or staff member.</strong></p>
 
   </div>
 </div>
