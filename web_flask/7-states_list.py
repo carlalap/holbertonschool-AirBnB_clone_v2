@@ -20,7 +20,7 @@ def states_list():
     """Display a HTML page with a list of all State
     objects from the DBStorage."""
     states = storage.all(State).values()
-    return render_template('states_list.html', states=states)
+    return render_template('7-states_list.html', states=states)
 
 
 if __name__ == '__main__':
