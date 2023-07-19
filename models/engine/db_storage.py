@@ -72,8 +72,8 @@ class DBStorage:
 
     def reload(self):
         """creates the current database session """
-        Base.metadata.create_all(self.__engine)
-        session_factory = sessionmaker(bind=self.__engine,
+        Base.metadata.create_all(DBStorage.__session)
+        session_factory = sessionmaker(bind=DBStorage.__session,
                                        expire_on_commit=False)
         Session = scoped_session(session_factory)
         DBStorage.__session = Session
