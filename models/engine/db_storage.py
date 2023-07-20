@@ -46,13 +46,13 @@ class DBStorage:
         """Method to return a dictionary of objects"""
         new_dict = {}
         if cls in self.__classes:
-            result = DBStorage.__session.query(cls).all
+            result = DBStorage.__session.query(cls)
             for row in result:
                 key = "{}.{}".format(row.__class__.__name__, row.id)
                 new_dict[key] = row
         elif cls is None:
             for cls in self.__classes:
-                result = DBStorage.__session.query(cls).all
+                result = DBStorage.__session.query(cls)
                 for row in result:
                     key = "{}.{}".format(row.__class__.__name__, row.id)
                     new_dict[key] = row
